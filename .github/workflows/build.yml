@@ -40,18 +40,30 @@ jobs:
       
      
       - name: Test NOVA OS
+      
+      - name: Test NOVA OS
         run: |
-          echo "Checking the NOVA OS kernel..."
+          echo "Checking the kernel format..."
           grub-file --is-x86-multiboot build/boot/kernel.elf
-          echo "Checking the ISO image..."
-          test -s build/nova-os.iso
-          echo "NOVA OS checks passed!"
 
-      - name: Save NOVA OS
-        uses: actions/upload-artifact@v4
-        with:
-          name: nova-os
-          path: build/nova-os.iso
+          echo "Starting NOVA OS in QEMU..."
+          set +e
+          timeout 15s qemu-system-i386 \
+            -cdrom build/nova-os.iso \
+            -display none \
+            -serial none \
+            -monitor none \
+            -no-reboot \
+            -no-shutdown \
+            -device isa-debug-exit,iobase=0xf4,iosize=0x04
+          result=$?
+          set -e
 
+          if [ "$result" -ne 33 ]; then
+            echo "BOOT TEST FAILED: exit code $result"
+            exit 1
+          fi
+
+          echo "SUCCESS: NOVA OS reached its test checkpoint!"
 
     
