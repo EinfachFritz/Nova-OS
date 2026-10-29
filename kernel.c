@@ -13,8 +13,16 @@ void kernel_main(void)
         i++;
     }
 
+   
+    /* Tell the virtual computer that the test passed. */
+    __asm__ volatile (
+        "outb %0, %1"
+        :
+        : "a"((unsigned char)0x10),
+          "Nd"((unsigned short)0xF4)
+    );
+
     while (1)
     {
         __asm__ volatile ("hlt");
     }
-}
