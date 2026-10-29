@@ -38,6 +38,7 @@ jobs:
           grub-mkrescue -o build/nova-os.iso build
 
       
+     
       - name: Test NOVA OS
         run: |
           echo "Checking the NOVA OS kernel..."
@@ -45,5 +46,12 @@ jobs:
           echo "Checking the ISO image..."
           test -s build/nova-os.iso
           echo "NOVA OS checks passed!"
+
+      - name: Save NOVA OS
+        uses: actions/upload-artifact@v4
+        with:
+          name: nova-os
+          path: build/nova-os.iso
+
 
     
